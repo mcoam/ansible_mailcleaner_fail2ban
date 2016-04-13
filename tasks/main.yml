@@ -1,0 +1,23 @@
+- name: "Instalar fail2ban"
+  apt: name={{ fail2ban_service_name }} state=present
+
+- name: "Copia archivo de filtro exim2.conf"
+  copy: src=exim2.conf  dest={{ fail2ban_dir_name }}/filter.d/exim2.local
+
+- name: "Copia archivo de action iptables-repeater.conf"
+  copy: src=iptables-repeater.conf dest={{ fail2ban_dir_name }}/action.d/iptables-repeater.conf
+
+- name: "Agregar configuracion de regla jail para Exim"
+  blockinfile:
+    dest: /etc/fail2ban/jail.conf
+    #dest: {{ fail2ban_conf_file }}
+    block: |
+      [exim2-repeater]
+      enabled  = true
+      filter   = exim2
+      action   = iptables-repeater[name=exim2]
+      logpath  = /var/mailcleaner/log/exim_stage1/mainlog
+      maxretry = 10
+      findtime = 31536000
+      bantime  = 31536000
+  notify: restart_fail2ban

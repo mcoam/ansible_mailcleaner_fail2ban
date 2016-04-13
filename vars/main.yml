@@ -1,0 +1,3 @@
+fail2ban_service_name: fail2ban
+fail2ban_dir_name: /etc/fail2ban
+fail2ban_conf_file: /etc/fail2ban/jail.conf
